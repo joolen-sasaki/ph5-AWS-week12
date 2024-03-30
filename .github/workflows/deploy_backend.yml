@@ -6,6 +6,8 @@ on:
 env:
   SERVICE_NAME: week15-ecs-service
   ROLE_TO_ASSUME: arn:aws:iam::042551760297:role/GitHubActions
+  CONTAINER_NAME: week12
+  TASK_DEFINITION_NAME: ph9aws
 jobs:
   deploy:
     name: Deploy
@@ -35,7 +37,7 @@ jobs:
         id: build-web
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.SERVICE_NAME }}-nginx
+          ECR_REPOSITORY: ${{ env.CONTAINER_NAME }}-nginx
           DOCKER_FILE: ./docker/nginx/Dockerfile.aws
         run: |
           docker build -t ${ECR_REPOSITORY} . -f ${DOCKER_FILE}
@@ -47,7 +49,7 @@ jobs:
         id: build-app
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.SERVICE_NAME }}-phpfpm
+          ECR_REPOSITORY: ${{ env.CONTAINER_NAME }}-phpfpm
           DOCKER_FILE: ./docker/php/Dockerfile.aws
         run: |
           docker build -t ${ECR_REPOSITORY} . -f ${DOCKER_FILE}
@@ -58,14 +60,14 @@ jobs:
       - name: Get ECS Task Definition
         id: create-taskdef
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.SERVICE_NAME }} | jq ".taskDefinition" | jq "del(.compatibilities)" | jq "del(.taskDefinitionArn)" | jq "del(.requiresAttributes)" | jq "del(.revision)" | jq "del(.status)" > ./task_definition.json
+          aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINITION_NAME }} | jq ".taskDefinition" | jq "del(.compatibilities)" | jq "del(.taskDefinitionArn)" | jq "del(.requiresAttributes)" | jq "del(.revision)" | jq "del(.status)" > ./task_definition.json
 
       - name: Fill in the new image ID Web
         id: task-def-web
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ./task_definition.json
-          container-name: ${{ env.SERVICE_NAME }}-web
+          container-name: ${{ env.CONTAINER_NAME }}-web
           image: ${{ steps.build-web.outputs.image }}
 
       - name: Fill in the new image ID App
@@ -73,7 +75,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.task-def-web.outputs.task-definition }}
-          container-name: ${{ env.SERVICE_NAME }}-phpfpm
+          container-name: ${{ env.CONTAINER_NAME }}-phpfpm
           image: ${{ steps.build-app.outputs.image }}
 
       - name: Deploy Amazon ECS
@@ -81,5 +83,5 @@ jobs:
         with:
           task-definition: ${{ steps.task-def-app.outputs.task-definition }}
           service: ${{ env.SERVICE_NAME }}
-          cluster: ${{ env.SERVICE_NAME }}
+          cluster: ${{ env.TASK_DEFINITION_NAME }}
           wait-for-service-stability: true
