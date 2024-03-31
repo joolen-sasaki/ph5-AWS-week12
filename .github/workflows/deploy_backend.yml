@@ -40,7 +40,7 @@ jobs:
           ECR_REPOSITORY: ${{ env.CONTAINER_NAME }}-nginx
           DOCKER_FILE: ./docker/nginx/Dockerfile.aws
         run: |
-          docker build -t ${ECR_REPOSITORY} . -f ${DOCKER_FILE}
+          docker build --platform linux/amd64 -t ${ECR_REPOSITORY} . -f ${DOCKER_FILE}
           docker tag ${ECR_REPOSITORY}:latest ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
           echo "::set-output name=image::${ECR_REGISTRY}/${ECR_REPOSITORY}:latest"
@@ -52,7 +52,7 @@ jobs:
           ECR_REPOSITORY: ${{ env.CONTAINER_NAME }}-phpfpm
           DOCKER_FILE: ./docker/php/Dockerfile.aws
         run: |
-          docker build -t ${ECR_REPOSITORY} . -f ${DOCKER_FILE}
+          docker build --platform linux/amd64 -t ${ECR_REPOSITORY} . -f ${DOCKER_FILE}
           docker tag ${ECR_REPOSITORY}:latest ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
           echo "::set-output name=image::${ECR_REGISTRY}/${ECR_REPOSITORY}:latest"
