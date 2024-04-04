@@ -5,7 +5,7 @@ function App() {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    fetch(`${apiUrl}/dummy-data`)
+    fetch(`${apiUrl}/users`)
       .then((response) => response.json())
       .then((data) => setUsers(data));
   }, [apiUrl]);

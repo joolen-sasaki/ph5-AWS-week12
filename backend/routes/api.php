@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,3 +36,9 @@ Route::get('/dummy-data', function () {
     ];
     return response()->json($data);
 });
+
+Route::get('/users', function() {
+    Log::info('ログ出力テスト');  // ここを追加
+    return User::all();
+});
+
