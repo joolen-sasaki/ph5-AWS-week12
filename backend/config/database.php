@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => $dbCredentials['DB_CONNECTION'] ?? 'mysql',
 
     /*
     |--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => $dbCredentials['DATABASE_URL'],
+            'url' => env('DATABASE_URL'),
             'host' => $dbCredentials['DB_HOST'] ?? '127.0.0.1',
             'port' => $dbCredentials['DB_PORT'] ?? '3306',
             'database' => $dbCredentials['DB_DATABASE'] ?? 'forge',
