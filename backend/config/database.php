@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Str;
 
-// DB_CREDENTIALSからデータベースの接続情報をデコード
-$dbCredentials = json_decode(env('DB_CREDENTIALS'), true);
-
 return [
 
     /*
@@ -18,7 +15,7 @@ return [
     |
     */
 
-    'default' => $dbCredentials['DB_CONNECTION'] ?? 'mysql',
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -49,11 +46,11 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => $dbCredentials['DB_HOST'] ?? '127.0.0.1',
-            'port' => $dbCredentials['DB_PORT'] ?? '3306',
-            'database' => $dbCredentials['DB_DATABASE'] ?? 'forge',
-            'username' => $dbCredentials['DB_USERNAME'] ?? 'forge',
-            'password' => $dbCredentials['DB_PASSWORD'] ?? '',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
